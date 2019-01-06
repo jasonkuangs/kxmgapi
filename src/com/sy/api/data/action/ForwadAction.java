@@ -3,6 +3,7 @@ package com.sy.api.data.action;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sy.basic.action.BaseAction;
+import com.sy.basic.util.JsonUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -122,6 +123,8 @@ public class ForwadAction extends BaseAction {
      */
     @Action("ad")
     public String ad() {
+
+
         RestTemplate restTemplate = new RestTemplate();
         if (isNotEmpty(id)) {
             if (id.equals("0")) {
@@ -135,8 +138,20 @@ public class ForwadAction extends BaseAction {
             resultStr = jsoncallback+"("+json+")";
             return STRING;
         }
+        if(isNotEmpty(pnumber)) {
+
+        }else{
+            pnumber = null;
+        }
+        if(isNotEmpty(mac)) {
+
+        }else{
+            mac = null;
+        }
         if (isNotEmpty(ua)) {
             ua = ua.replaceAll(",",".").replaceAll(";",".").replaceAll("/",".").replaceAll(" ","");
+        }else {
+            ua =null;
         }
         String reqJsonStr = "{\"authid\":\"miguauthid\", \"token\":\"migutoken\",\"device\":{\"carrier\": 0,\"connectiontype\": 0,\"devicetype\": 1,\"did\": \"other\", \"didha\": 0, \"dpid\": \"other\",\"dpidha\": 0,\"mac\":" + mac + ",\"pnumber\":" + pnumber + ",\"ua\":" + ua + ",\"networktraffictype\":3}, \"imp\":[{\"actiontype\":1,\"id\":" + id + "}],\"app\":{\"networktraffictype\":3}}";
         HttpHeaders headers = new HttpHeaders();
@@ -204,7 +219,8 @@ public class ForwadAction extends BaseAction {
      */
     @Action(value="getDownFlag")
     public String getDownFlag() {
-        resultStr = jsoncallback+ "({\"download\":\"1\"})";
+        String downloadFlag = JsonUtil.getProFile().getProperty("downloadFlag");
+        resultStr = jsoncallback+ "({\"download\":\""+downloadFlag+"\"})";
         return STRING;
     }
 

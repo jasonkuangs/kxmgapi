@@ -18,7 +18,7 @@ import java.util.Map;
 @Namespace("/statistics")
 @Results({ @Result(name = "string", type = "stringResult", params = { "string",
 		"resultStr" }) })
-public class StatisticsActionbak extends BaseAction {
+public class StatisticsAction extends BaseAction {
 
 	private static final long serialVersionUID = 9054547164004444650L;
 	private static Logger logger = Logger.getLogger(StatisticsAction.class);

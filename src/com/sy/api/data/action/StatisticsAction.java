@@ -323,10 +323,17 @@ public class StatisticsAction extends BaseAction {
 				tmpmap.put("video_id", video_id == null ? "" : video_id);
 				tmpmap.put("detail", detail == null ? "" : detail);
 				Gson tmpjson = new Gson();
+				if (duration == null || duration.equals("")){
+					duration = "0";
+				}
 				String jsonStr = tmpjson.toJson(tmpmap); // toJson
-				if (Integer.parseInt(duration) <=10800) {
-					NewKafkaSendUtil.getInstance().sendMessage(jsonStr);
-					logger.info(jsonStr);
+				try{
+					if (Integer.parseInt(duration) <= 10800){
+						NewKafkaSendUtil.getInstance().sendMessage(jsonStr);
+						logger.info(jsonStr);
+					}
+				}catch(Exception e){
+					logger.error(e.getMessage());
 				}
 			}
 		} catch (Exception ex) {

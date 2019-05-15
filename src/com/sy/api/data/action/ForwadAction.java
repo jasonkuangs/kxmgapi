@@ -40,7 +40,6 @@ public class ForwadAction extends BaseAction {
     private String userName;
     private String userId;
     private String roomId;
-    private String url;
 
     //解决跨域要用的的字段
     private String callbackParameter="jsoncallback";
@@ -65,11 +64,21 @@ public class ForwadAction extends BaseAction {
     private String cid;
 //    private String userId;
     private String userToken;
-    private String visitUrl;
+    private static String visitDownUrl;
 //    private String callbackParameter="jsoncallback";
 //    private String jsoncallback="";
 //    private final static String STRING = "string";
 //    private String resultStr;
+
+    private static String visitContentUrl;//
+    private static String adVisitUrl;//
+    private static String feedBackUrl;//
+    private static String url;
+    private String type;
+    private String contents;
+    private String mobile;
+    private String version;
+    private String uuid;
 
     /**
      * 直播 获取聊天webstocketUrl
@@ -79,6 +88,7 @@ public class ForwadAction extends BaseAction {
      */
     @Action("getWebStocketUrl")
     public String getWebStocketUrl() throws IOException {
+        url = JsonUtil.getProFile().getProperty("talkVisitUrl");
         //首先需要先创建一个DefaultHttpClient的实例
         HttpClient httpClient = new DefaultHttpClient();
         //先创建一个HttpGet对象,传入目标的网络地址,然后调用HttpClient的execute()方法即可:
@@ -101,6 +111,7 @@ public class ForwadAction extends BaseAction {
      */
     @Action("sendMessage")
     public String sendMessage() throws IOException {
+        url = JsonUtil.getProFile().getProperty("talkVisitUrl");
         //首先需要先创建一个DefaultHttpClient的实例
         HttpClient httpClient = new DefaultHttpClient();
         //先创建一个HttpGet对象,传入目标的网络地址,然后调用HttpClient的execute()方法即可:
@@ -123,8 +134,7 @@ public class ForwadAction extends BaseAction {
      */
     @Action("ad")
     public String ad() {
-
-
+        adVisitUrl  = JsonUtil.getProFile().getProperty("adVisitUrl");
         RestTemplate restTemplate = new RestTemplate();
         if (isNotEmpty(id)) {
             if (id.equals("0")) {
@@ -157,7 +167,7 @@ public class ForwadAction extends BaseAction {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(reqJsonStr, headers);
-        ResponseEntity<Map> resp = restTemplate.exchange("http://ggx.cmvideo.cn/request/api10", HttpMethod.POST, entity, Map.class);
+        ResponseEntity<Map> resp = restTemplate.exchange(adVisitUrl+"/request/api10", HttpMethod.POST, entity, Map.class);
         System.out.println("打印信息"+resp.getBody());
         if (resp.getStatusCode() == HttpStatus.valueOf(204)) {
             CheckObject c = new CheckObject("204", "暂无广告内容!");
@@ -178,11 +188,12 @@ public class ForwadAction extends BaseAction {
      */
     @Action(value="getDownUrl")
     public String getDownUrl() throws IOException {
+        visitDownUrl = JsonUtil.getProFile().getProperty("downVisitUrl");
         //首先需要先创建一个DefaultHttpClient的实例
         HttpClient httpClient = new DefaultHttpClient();
         //先创建一个HttpGet对象,传入目标的网络地址,然后调用HttpClient的execute()方法即可:
         HttpGet httpGet = new HttpGet();
-        httpGet.setURI(URI.create(visitUrl+"/playurl/v1/down/downurl?h265=false&contIds=" + cid + "&dolby=false&mt=10&nt=4&uc=" + uc + "&vr=false"));
+        httpGet.setURI(URI.create(visitDownUrl+"/playurl/v1/down/downurl?h265=false&contIds=" + cid + "&dolby=false&mt=10&nt=4&uc=" + uc + "&vr=false"));
         httpGet.addHeader("userId", userId);
         httpGet.addHeader("userToken", userToken);
         httpGet.addHeader("SDKCEId", "79acd784-cbbb-4cae-8778-8723e001164b");
@@ -201,11 +212,12 @@ public class ForwadAction extends BaseAction {
      */
     @Action(value="getContentInfo")
     public String getContentInfo() throws IOException {
+        visitContentUrl = JsonUtil.getProFile().getProperty("wwwVisitUrl");
         //首先需要先创建一个DefaultHttpClient的实例
         HttpClient httpClient = new DefaultHttpClient();
         //先创建一个HttpGet对象,传入目标的网络地址,然后调用HttpClient的execute()方法即可:
         HttpGet httpGet = new HttpGet();
-        httpGet.setURI(URI.create("http://www.miguvideo.com/wap/resource/miguPC_client/data/detailData.jsp?cid=" + cid));
+        httpGet.setURI(URI.create(visitContentUrl+"/wap/resource/miguPC_client/data/detailData.jsp?cid=" + cid));
         HttpResponse response = httpClient.execute(httpGet);
         String httpEntityContent = getHttpEntityContent(response);
         httpGet.abort();
@@ -214,13 +226,38 @@ public class ForwadAction extends BaseAction {
     }
 
     /**
-     * 获取节目是否可以下载 1 表示可以下载 反正 不能下载
+     * 获取节目是否可以下载 1 表示可以下载 反之 不能下载
      * @return
      */
     @Action(value="getDownFlag")
     public String getDownFlag() {
         String downloadFlag = JsonUtil.getProFile().getProperty("downloadFlag");
         resultStr = jsoncallback+ "({\"download\":\""+downloadFlag+"\"})";
+        return STRING;
+    }
+
+    /**
+     * 意见反馈
+     * @return
+     * @throws IOException
+     */
+    @Action(value="feedback")
+    public String feedback() throws IOException {
+        feedBackUrl = JsonUtil.getProFile().getProperty("feedBackUrl");
+        //首先需要先创建一个DefaultHttpClient的实例
+        HttpClient httpClient = new DefaultHttpClient();
+        //先创建一个HttpGet对象,传入目标的网络地址,然后调用HttpClient的execute()方法即可:
+        HttpPost httpPost = new HttpPost();
+        httpPost.setURI(URI.create(feedBackUrl+"/interaction/v2/feedback?type="+type+"&contents="+contents));
+        httpPost.addHeader("mobile", mobile);
+        httpPost.addHeader("channel", "pc");
+        httpPost.addHeader("Phone-info", "pc||"+version);
+        httpPost.addHeader("BUSS_ID", uuid);
+        HttpResponse response = httpClient.execute(httpPost);
+
+        String httpEntityContent = getHttpEntityContent(response);
+        httpPost.abort();
+        resultStr = jsoncallback+"("+httpEntityContent+")";
         return STRING;
     }
 
@@ -278,13 +315,6 @@ public class ForwadAction extends BaseAction {
         this.roomId = roomId;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
     public String getCallbackParameter() {
         return callbackParameter;
     }
@@ -407,11 +437,51 @@ public class ForwadAction extends BaseAction {
         this.userToken = userToken;
     }
 
-    public String getVisitUrl() {
-        return visitUrl;
+
+
+
+
+
+
+
+
+    public String getType() {
+        return type;
     }
 
-    public void setVisitUrl(String visitUrl) {
-        this.visitUrl = visitUrl;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

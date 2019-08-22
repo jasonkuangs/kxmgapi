@@ -163,7 +163,7 @@ public class ForwadAction extends BaseAction {
         }else {
             ua =null;
         }
-        String reqJsonStr = "{\"authid\":\"miguauthid\", \"token\":\"migutoken\",\"device\":{\"carrier\": 0,\"connectiontype\": 0,\"devicetype\": 1,\"did\": \"other\", \"didha\": 0, \"dpid\": \"other\",\"dpidha\": 0,\"mac\":" + mac + ",\"pnumber\":" + pnumber + ",\"ua\":" + ua + ",\"networktraffictype\":3}, \"imp\":[{\"actiontype\":1,\"id\":" + id + "}],\"app\":{\"networktraffictype\":3}}";
+        String reqJsonStr = "{\"authid\":\"miguauthid\", \"token\":\"migutoken\",\"device\":{\"carrier\": 0,\"connectiontype\": 0,\"devicetype\": 1,\"did\": \"other\", \"didha\": 0, \"dpid\": \"other\",\"dpidha\": 0,\"mac\":\"" + mac + "\",\"pnumber\":\"" + pnumber + "\",\"ua\":\"" + ua + "\",\"networktraffictype\":3}, \"imp\":[{\"actiontype\":1,\"id\":\"" + id + "\"}],\"app\":{\"networktraffictype\":3}}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(reqJsonStr, headers);

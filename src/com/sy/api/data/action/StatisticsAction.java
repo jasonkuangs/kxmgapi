@@ -279,7 +279,7 @@ public class StatisticsAction extends BaseAction {
 				.append("ip_address: " + tmpremoteip).append("\r\n")
 				.append("sys_time: " + systemTime).append("\r\n")
 				.append("report_type: " + report_type).append("\r\n")
-				.append("visit_time: " + visit_time).append("\r\n")
+				.append("visit_time: " + systemTime).append("\r\n")
 				.append("visitor_type: " + visitor_type).append("\r\n")
 				.append("user_id: " + user_id).append("\r\n")
 				.append("account_name: " + account_name).append("\r\n")
@@ -302,7 +302,7 @@ public class StatisticsAction extends BaseAction {
 				tmpmap.put("sys_time", systemTime);
 				tmpmap.put("report_type", report_type == null ? "0"
 						: report_type);
-				tmpmap.put("visit_time", visit_time == null ? "" : visit_time);
+				tmpmap.put("visit_time",systemTime);
 				tmpmap.put("visitor_type", visitor_type == null ? ""
 						: visitor_type);
 				tmpmap.put("user_id", user_id == null ? "" : user_id);

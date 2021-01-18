@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="MiguApi:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/MiguApi_war</output-path>
+    <root id="archive" name="MiguApi_war.war">
+      <element id="artifact" artifact-name="MiguApi:war exploded" />
+      <element id="dir-copy" path="$PROJECT_DIR$/WebRoot" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib (2)" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

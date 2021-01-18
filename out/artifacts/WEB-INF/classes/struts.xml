@@ -19,4 +19,11 @@
 		</interceptors>
 		<default-interceptor-ref name="safesysapiStack" />
 	</package>
+
+	<!--<package name="my-default" extends="json-default">-->
+		<!--<action name="dataMap" class="com.sy.api.data.action.TransmitAction" method="getContentInfo">-->
+			<!--<result name="dataMap" type="json"></result>-->
+		<!--</action>-->
+	<!--</package>-->
+
 </struts>

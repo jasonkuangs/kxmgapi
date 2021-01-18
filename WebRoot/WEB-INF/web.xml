@@ -37,7 +37,20 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<!--<filter>-->
+		<!--<filter-name>Simple CORSFilter</filter-name>-->
+		<!--<filter-class>com.sy.api.data.action.SimpleCORSFilter</filter-class>-->
+	<!--</filter>-->
+	<!--<filter-mapping>-->
+		<!--<filter-name>Simple CORSFilter</filter-name>-->
+		<!--<url-pattern>/*</url-pattern>-->
+	<!--</filter-mapping>-->
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
+
+
+
+
 </web-app>

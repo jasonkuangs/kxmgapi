@@ -163,7 +163,7 @@ public class ForwadAction extends BaseAction {
         }else {
             ua =null;
         }
-        String reqJsonStr = "{\"authid\":\"miguauthid\", \"token\":\"migutoken\",\"device\":{\"carrier\": 0,\"connectiontype\": 0,\"devicetype\": 1,\"did\": \"other\", \"didha\": 0, \"dpid\": \"other\",\"dpidha\": 0,\"mac\":\"" + mac + "\",\"pnumber\":\"" + pnumber + "\",\"ua\":\"" + ua + "\",\"networktraffictype\":3}, \"imp\":[{\"actiontype\":1,\"id\":\"" + id + "\"}],\"app\":{\"networktraffictype\":3}}";
+        String reqJsonStr = "{\"authid\":\"miguauthid\", \"token\":\"migutoken\",\"device\":{\"carrier\": 0,\"os\": \"other\", \"connectiontype\": 0,\"devicetype\": 1,\"did\": \"other\", \"didha\": 0, \"dpid\": \"other\",\"dpidha\": 0,\"mac\":\"" + mac + "\",\"pnumber\":\"" + pnumber + "\",\"ua\":\"" + ua + "\",\"networktraffictype\":3}, \"imp\":[{\"actiontype\":1,\"id\":\"" + id + "\"}],\"app\":{\"networktraffictype\":3}}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(reqJsonStr, headers);
@@ -232,7 +232,19 @@ public class ForwadAction extends BaseAction {
     @Action(value="getDownFlag")
     public String getDownFlag() {
         String downloadFlag = JsonUtil.getProFile().getProperty("downloadFlag");
-        resultStr = jsoncallback+ "({\"download\":\""+downloadFlag+"\"})";
+        String heartbeatFlag = JsonUtil.getProFile().getProperty("heartbeatFlag");
+        resultStr = jsoncallback+ "({\"download\":\""+downloadFlag+"\",\"heartbeat\":\""+heartbeatFlag+"\"})";
+        return STRING;
+    }
+
+    /**
+     * 获取客户端是否上报心跳 0 表示不上传，1表示上报
+     * @return
+     */
+    @Action(value="getHeartBeatFlag")
+    public String getHeartBeatFlag() {
+        String heartbeatFlag = JsonUtil.getProFile().getProperty("heartbeatFlag");
+        resultStr = jsoncallback+ "({\"heartbeat\":\""+heartbeatFlag+"\"})";
         return STRING;
     }
 

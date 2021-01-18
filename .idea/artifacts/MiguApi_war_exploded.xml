@@ -9,9 +9,10 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="lib" />
           <element id="library" level="module" name="Java EE 6-Java EE 6" module-name="MiguApi" />
+          <element id="library" level="project" name="lib (2)" />
         </element>
       </element>
-      <element id="javaee-facet-resources" facet="MiguApi/web/Web" />
+      <element id="javaee-facet-resources" facet="MiguApi/web/Web2" />
     </root>
   </artifact>
 </component>

@@ -226,14 +226,16 @@ public class ForwadAction extends BaseAction {
     }
 
     /**
-     * 获取节目是否可以下载 1 表示可以下载 反之 不能下载
+     * 获取节目是否可以下载 downloadFlag=1 表示可以下载 反之 不能下载；heartbeatFlag大于0 就是心跳上报时间;
      * @return
      */
     @Action(value="getDownFlag")
     public String getDownFlag() {
         String downloadFlag = JsonUtil.getProFile().getProperty("downloadFlag");
         String heartbeatFlag = JsonUtil.getProFile().getProperty("heartbeatFlag");
-        resultStr = jsoncallback+ "({\"download\":\""+downloadFlag+"\",\"heartbeat\":\""+heartbeatFlag+"\"})";
+        String tryitDurationFlag = JsonUtil.getProFile().getProperty("tryitDurationFlag");
+        //resultStr = jsoncallback+ "({\"download\":\""+downloadFlag+"\",\"heartbeat\":\""+heartbeatFlag+"\",})";
+        resultStr = jsoncallback+ "({\"download\":\""+downloadFlag+"\",\"heartbeat\":\""+heartbeatFlag+"\",\"tryitDuration\":\""+tryitDurationFlag+"\"})";
         return STRING;
     }
 
@@ -245,6 +247,17 @@ public class ForwadAction extends BaseAction {
     public String getHeartBeatFlag() {
         String heartbeatFlag = JsonUtil.getProFile().getProperty("heartbeatFlag");
         resultStr = jsoncallback+ "({\"heartbeat\":\""+heartbeatFlag+"\"})";
+        return STRING;
+    }
+
+    /**
+     * 获取用券节目试看时长单位秒
+     * @return
+     */
+    @Action(value="getTryItDurationFlag")
+    public String getTryItDurationFlag() {
+        String tryitDurationFlag = JsonUtil.getProFile().getProperty("tryitDurationFlag");
+        resultStr = jsoncallback+ "{\"tryitDuration\":\""+tryitDurationFlag+"\"}";
         return STRING;
     }
 

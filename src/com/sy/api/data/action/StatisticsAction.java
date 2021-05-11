@@ -9,6 +9,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -149,6 +150,16 @@ public class StatisticsAction extends BaseAction {
 	private String play_error_code;//播放异常数据上报 report_type=8
 	private String client_error_message;//崩溃错误信息 崩溃错误信息 report_type=99
 
+	// 2021-04-16 添加errorPhase 当播放器播放异常 report_type=8时,需要区分是起播还是播放中;其中起播值为
+	private String errorPhase;
+
+	public String getErrorPhase() {
+		return errorPhase;
+	}
+
+	public void setErrorPhase(String errorPhase) {
+		this.errorPhase = errorPhase;
+	}
 
 	public String getVideo_id() {
 		return video_id;
@@ -450,6 +461,54 @@ public class StatisticsAction extends BaseAction {
 		 * logger.info("visit_url: "+visit_url); logger.info("detail: "+detail);
 		 * logger.info("====[report end]====");
 		 */
+		if (StringUtils.isEmpty(report_type)) {
+			logger.info("report_type  null");
+			return STRING;
+		}
+		if (StringUtils.isEmpty(visit_session_id) || StringUtils.isEmpty(mac_address)) {
+			logger.info("visit_session_id or mac_address is null");
+			return STRING;
+		}
+		/**
+		 * report_type=3 playSessionId is null return
+		 */
+		if (report_type.equals("3") && StringUtils.isEmpty(playSessionId)) {
+			logger.info("3playSessionId is null");
+			return STRING;
+		}
+		/**
+		 * report_type=8 play_error_code is null return
+		 */
+		if (report_type.equals("8") && StringUtils.isEmpty(play_error_code)) {
+			logger.info("8play_error_code is null");
+			return STRING;
+		}
+		if (report_type.equals("8")) {
+			if ("10001003".equals(play_error_code) || "10001000".equals(play_error_code) || Integer.parseInt(play_error_code) <= 15) {
+				logger.info("8play_error_code is 10001003 or 10001000 15");
+				return STRING;
+			}
+			if ("10000020".equals(play_error_code) || "10000004".equals(play_error_code) || "10003006".equals(play_error_code) || "10003007".equals(play_error_code)) {
+				errorPhase = "1";
+			} else if ("10001000".equals(play_error_code) || "10000011".equals(play_error_code) || "10000102".equals(play_error_code) || "10000002".equals(play_error_code) || "10003008".equals(play_error_code) || "10003009".equals(play_error_code) || "10003010".equals(play_error_code)) {
+				errorPhase = "2";
+			}else {
+				errorPhase = "0";
+			}
+		}
+//		if ("99".equals(report_type)){
+//            if ("Exception Code: 0xc0000005".equals(client_error_message) || "Exception Code: 0xe0000008".equals(client_error_message) || "Exception Code: 0x80000003".equals(client_error_message) || "Exception Code: 0xc0000006".equals(client_error_message) || "Exception Code: 0xc0000409".equals(client_error_message) || "Exception Code: 0xc0000417".equals(client_error_message)) {
+//                return STRING;
+//            }
+//        }
+//        if ((report_type.equals("8") && play_error_code.equals("10001003"))) {
+//            logger.info("8play_error_code is 10001003");
+//            return STRING;
+//        }
+//		if (report_type.equals("8") && play_error_code.equals("10001000")) {
+//			logger.info("8play_error_code is 10001000");
+//			return STRING;
+//		}
 		String tmpremoteip = getRemoteAddress();
 		tmpbuffer.append("====[report begin]====").append("\r\n")
 				.append("ip_address: " + tmpremoteip).append("\r\n")
@@ -489,6 +548,7 @@ public class StatisticsAction extends BaseAction {
 				.append("MG_MSG_STUCK_END: " + MG_MSG_STUCK_END).append("\r\n")
 				.append("play_error_code: " + play_error_code).append("\r\n")
 				.append("client_error_message: " + client_error_message).append("\r\n")
+				.append("errorPhase: " + errorPhase).append("\r\n")
 				.append("====[report end]====").append("\r\n");
 		logger.info(tmpbuffer.toString());
 		try {
@@ -536,6 +596,7 @@ public class StatisticsAction extends BaseAction {
 				tmpmap.put("MG_MSG_STUCK_END", MG_MSG_STUCK_END == null ? "" : MG_MSG_STUCK_END);
 				tmpmap.put("play_error_code", play_error_code == null ? "" : play_error_code);
 				tmpmap.put("client_error_message", client_error_message == null ? "" : client_error_message);
+				tmpmap.put("errorPhase", errorPhase == null ? "" : errorPhase);
 
 
 				Gson tmpjson = new Gson();
